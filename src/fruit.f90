@@ -515,16 +515,6 @@ module fruit
     module procedure fruit_summary_
   end interface
 
-  public ::          override_stdout
-  interface          override_stdout
-    module procedure override_stdout_
-  end interface
-
-  public ::          end_override_stdout
-  interface          end_override_stdout
-    module procedure end_override_stdout_
-  end interface
-
   public ::          get_message_index
   interface          get_message_index
     module procedure get_message_index_
@@ -1035,14 +1025,6 @@ contains
     is_case_passed = case_passed
   end function is_case_passed
 
-  subroutine override_stdout_(write_unit, filename)
-    integer, intent(in) ::    write_unit
-    character(len = *), intent(in) :: filename
-
-    stdout = write_unit
-    open(stdout, file = filename, action = "write", status = "replace")
-  end subroutine override_stdout_
-
   subroutine stash_test_suite
     stashed_suite%successful_assert_count = successful_assert_count
                   successful_assert_count = 0
@@ -1109,11 +1091,6 @@ contains
     linechar_count     = stashed_suite%linechar_count
     if_show_dots       = stashed_suite%if_show_dots
   end subroutine restore_test_suite
-
-  subroutine end_override_stdout_
-    close(stdout)
-    stdout = STDOUT_DEFAULT
-  end subroutine end_override_stdout_
 
   subroutine set_prefix_(str)
     character (len = *), intent(in) :: str
