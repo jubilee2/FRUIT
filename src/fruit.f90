@@ -24,9 +24,9 @@
 
 module fruit_util
   private
-  
+
   public :: equals, to_s, strip
-  
+
   interface equals
      module procedure equalEpsilon
      module procedure floatEqual
@@ -131,24 +131,24 @@ contains
   !------------------------
   ! test if 2 values are close
   !------------------------
-  !logical function equals (number1, number2) 
+  !logical function equals (number1, number2)
   !  real,  intent (in) :: number1, number2
-  !  
+  !
   !  return equalEpsilon (number1, number2, epsilon(number1))
   !
   !end function equals
 
 
   function equalEpsilon (number1, number2, epsilon ) result (resultValue)
-    real , intent (in) :: number1, number2, epsilon 
-    logical :: resultValue 
+    real , intent (in) :: number1, number2, epsilon
+    logical :: resultValue
 
     resultValue = .false.
 
     ! test very small number1
     if ( abs(number1) < epsilon .and.  abs(number1 - number2) < epsilon ) then
        resultValue = .true.
-    else 
+    else
        if ((abs(( number1 - number2)) / number1) < epsilon ) then
           resultValue = .true.
        else
@@ -160,8 +160,8 @@ contains
 
   function floatEqual (number1, number2 ) result (resultValue)
     real , intent (in) :: number1, number2
-    real :: epsilon 
-    logical :: resultValue 
+    real :: epsilon
+    logical :: resultValue
 
     resultValue = .false.
     epsilon = 1E-6
@@ -169,7 +169,7 @@ contains
     ! test very small number1
     if ( abs(number1) < epsilon .and.  abs(number1 - number2) < epsilon ) then
        resultValue = .true.
-    else 
+    else
        if ((abs(( number1 - number2)) / number1) < epsilon ) then
           resultValue = .true.
        else
@@ -180,8 +180,8 @@ contains
 
   function doublePrecisionEqual (number1, number2 ) result (resultValue)
     double precision , intent (in) :: number1, number2
-    real :: epsilon 
-    logical :: resultValue 
+    real :: epsilon
+    logical :: resultValue
 
     resultValue = .false.
     epsilon = 1E-6
@@ -190,7 +190,7 @@ contains
     ! test very small number1
     if ( abs(number1) < epsilon .and.  abs(number1 - number2) < epsilon ) then
        resultValue = .true.
-    else 
+    else
        if ((abs(( number1 - number2)) / number1) < epsilon ) then
           resultValue = .true.
        else
@@ -201,20 +201,20 @@ contains
 
   function integerEqual (number1, number2 ) result (resultValue)
     integer , intent (in) :: number1, number2
-    logical :: resultValue 
+    logical :: resultValue
 
     resultValue = .false.
 
     if ( number1 .eq. number2 ) then
        resultValue = .true.
-    else 
+    else
        resultValue = .false.
     end if
   end function integerEqual
 
   function stringEqual (str1, str2 ) result (resultValue)
     character(*) , intent (in) :: str1, str2
-    logical :: resultValue 
+    logical :: resultValue
 
     resultValue = .false.
 
@@ -225,7 +225,7 @@ contains
 
   function logicalEqual (l1, l2 ) result (resultValue)
     logical, intent (in) :: l1, l2
-    logical              :: resultValue 
+    logical              :: resultValue
 
     resultValue = .false.
 
@@ -243,17 +243,6 @@ module fruit
 
   integer, parameter :: STDOUT_DEFAULT = 6
   integer :: stdout   = STDOUT_DEFAULT
-
-  integer, parameter :: XML_OPEN = 20
-  integer, parameter :: XML_WORK_DEFAULT = 21
-  integer :: xml_work = XML_WORK_DEFAULT
-  character (len = *), parameter :: xml_filename     = "result.xml"
-  character (len = *), parameter :: XML_FN_WORK_DEF = "result_tmp.xml"
-  character (len = 50) :: xml_filename_work = XML_FN_WORK_DEF
-
-  integer, parameter :: MAX_NUM_FAILURES_IN_XML = 10
-  integer, parameter :: XML_LINE_LENGTH = 2670  
-    !! xml_line_length >= max_num_failures_in_xml * (msg_length + 1) + 50
 
   integer, parameter :: STRLEN_T = 12
 
@@ -332,7 +321,6 @@ module fruit
   public :: assert_true,       assertTrue
   public :: stash_test_suite, restore_test_suite
   public :: FRUIT_PREFIX_LEN_MAX
-  public :: override_xml_work, end_override_xml_work
   public :: get_assert_and_case_count
 
   public :: initializeFruit
@@ -493,7 +481,7 @@ module fruit
      module procedure add_fail_
      module procedure add_fail_unit_
   end interface
- 
+
   public ::           addFail
   interface           addFail
      module procedure add_fail_
@@ -522,29 +510,9 @@ module fruit
      module procedure run_test_case_named_
   end interface
 
-  public ::          init_fruit_xml
-  interface          init_fruit_xml
-    module procedure init_fruit_xml_
-  end interface
-
   public ::          fruit_summary
   interface          fruit_summary
     module procedure fruit_summary_
-  end interface
-
-  public ::          fruit_summary_xml
-  interface          fruit_summary_xml
-    module procedure fruit_summary_xml_
-  end interface
-
-  public ::          case_passed_xml
-  interface          case_passed_xml
-    module procedure case_passed_xml_
-  end interface
-
-  public ::          case_failed_xml
-  interface          case_failed_xml
-    module procedure case_failed_xml_
   end interface
 
   public ::          override_stdout
@@ -555,24 +523,6 @@ module fruit
   public ::          end_override_stdout
   interface          end_override_stdout
     module procedure end_override_stdout_
-  end interface
-
-  interface          override_xml_work
-    module procedure override_xml_work_
-  end interface
-
-  interface          end_override_xml_work
-    module procedure end_override_xml_work_
-  end interface
-
-  public ::          get_xml_filename_work
-  interface          get_xml_filename_work
-    module procedure get_xml_filename_work_
-  end interface
-
-  public ::          set_xml_filename_work
-  interface          set_xml_filename_work
-    module procedure set_xml_filename_work_
   end interface
 
   public ::          get_message_index
@@ -632,12 +582,12 @@ module fruit
   interface           fruit_if_case_failed
     module procedure  fruit_if_case_failed_
   end interface
- 
+
   public ::           fruit_hide_dots
   interface           fruit_hide_dots
     module procedure  fruit_hide_dots_
   end interface
- 
+
   public ::           fruit_show_dots
   interface           fruit_show_dots
     module procedure  fruit_show_dots_
@@ -679,47 +629,6 @@ contains
 !$omp end critical (FRUIT_OMP_DEALLOCATE_MESSAGE_ARRAY)
   end subroutine fruit_finalize_
 
-  subroutine init_fruit_xml_(rank)
-    integer, optional, intent(in) :: rank
-    logical :: rank_zero_or_single
-
-    rank_zero_or_single = .true.
-    if (present(rank)) then
-      if (rank /= 0) then
-        rank_zero_or_single = .false.
-      endif
-    endif
-
-
-    if (rank_zero_or_single) then
-      open (XML_OPEN, file = xml_filename, action ="write", status = "replace")
-        write(XML_OPEN, '("<?xml version=""1.0"" encoding=""UTF-8""?>")')
-        write(XML_OPEN, '("<testsuites>")')
-        write(XML_OPEN, '("  <testsuite ")', advance = "no")
-        write(XML_OPEN, '(      "errors=""0"" "   )', advance = "no")
-        write(XML_OPEN, '(      "tests=""1"" "    )', advance = "no")
-        write(XML_OPEN, '(      "failures=""1"" " )', advance = "no")
-        write(XML_OPEN, '(      "name=""", a, """ ")', advance = "no") "name of test suite"
-        write(XML_OPEN, '(      "id=""1"">")')
-  
-        write(XML_OPEN, &
-        &  '("    <testcase name=""", a, """ classname=""", a, """ time=""", a, """>")') &
-        &  "dummy_testcase", "dummy_classname", "0"
-  
-        write(XML_OPEN, '(a)', advance = "no") "      <failure type=""failure"" message="""
-        write(XML_OPEN, '(a)', advance = "no") "FRUIT did not generate regular content of result.xml."
-        write(XML_OPEN, '(a)')                 """/>"
-        write(XML_OPEN, '("    </testcase>")')
-  
-        write(XML_OPEN, '("  </testsuite>")')
-        write(XML_OPEN, '("</testsuites>")')
-      close(XML_OPEN)
-    endif
-
-    open (xml_work, FILE = xml_filename_work, action ="write", status='replace')
-    close(xml_work)
-  end subroutine init_fruit_xml_
-
   function  case_delta_t()
     character(len = STRLEN_T) :: case_delta_t
     real :: delta_t
@@ -738,91 +647,6 @@ contains
     write(case_delta_t, '(g12.4)') delta_t
     case_delta_t = adjustl(case_delta_t)
   end function case_delta_t
-
-  subroutine case_passed_xml_(tc_name, classname)
-    character(*), intent(in) :: tc_name
-    character(*), intent(in) :: classname
-    character(len = STRLEN_T) :: case_time
-
-    case_time = case_delta_t()
-
-    open (xml_work, FILE = xml_filename_work, position='append')
-    write(xml_work, &
-   &  '("    <testcase name=""", a, """ classname=""", a, a, """ time=""", a, """/>")') &
-   &  trim(tc_name), trim(prefix), trim(classname), trim(case_time)
-    close(xml_work)
-  end subroutine case_passed_xml_
-
-
-  subroutine case_failed_xml_(tc_name, classname)
-    character(*), intent(in) :: tc_name
-    character(*), intent(in) :: classname
-    integer :: i, j
-    character(len = STRLEN_T) :: case_time
-
-    case_time = case_delta_t()
-
-    open (xml_work, FILE = xml_filename_work, position='append')
-    write(xml_work, &
-   &  '("    <testcase name=""", a, """ classname=""", a, a, """ time=""", a, """>")') &
-   &  trim(tc_name), trim(prefix), trim(classname), trim(case_time)
-
-    write(xml_work, '("      <failure type=""failure"" message=""")', advance = "no")
-
-    do i = message_index_from, message_index - 1
-      j = i - message_index_from + 1
-      if (j > MAX_NUM_FAILURES_IN_XML) then
-        write(xml_work, '("(omit the rest)")', advance="no")
-        exit
-      endif
-
-      write(xml_work, '(a)', advance = "no") trim(strip(message_array(i)))
-
-      if (i == message_index - 1) then
-        continue
-      else
-        write(xml_work, '("&#xA;")', advance="no")
-      endif
-    enddo
-    write(xml_work, '("""/>")')
-
-    write(xml_work, &
-   &  '("    </testcase>")')
-    close(xml_work)
-  end subroutine case_failed_xml_
-
-  subroutine fruit_summary_xml_
-    character(len = XML_LINE_LENGTH) :: whole_line
-    character(len = 100) :: full_count
-    character(len = 100) :: fail_count
-
-    full_count = int_to_str(successful_case_count + failed_case_count)
-    fail_count = int_to_str(failed_case_count)
-
-    open (XML_OPEN, file = xml_filename, action ="write", status = "replace")
-    write(XML_OPEN, '("<?xml version=""1.0"" encoding=""UTF-8""?>")')
-    write(XML_OPEN, '("<testsuites>")')
-    write(XML_OPEN, '("  <testsuite errors=""0"" ")', advance = "no")
-    write(XML_OPEN, '("tests=""", a, """ ")', advance = "no") &
-    &  trim(full_count)
-    write(XML_OPEN, '("failures=""", a, """ ")', advance = "no") &
-    &  trim(fail_count)
-    write(XML_OPEN, '("name=""", a, """ ")', advance = "no") &
-    &  "name of test suite"
-    write(XML_OPEN, '("id=""1"">")')
-
-    open (xml_work, FILE = xml_filename_work)
-    do
-      read(xml_work, '(a)', end = 999) whole_line
-      write(XML_OPEN, '(a)') trim(whole_line)
-    enddo
-999 continue
-    close(xml_work)
-
-    write(XML_OPEN, '("  </testsuite>")')
-    write(XML_OPEN, '("</testsuites>")')
-    close(XML_OPEN)
-  end subroutine fruit_summary_xml_
 
   function int_to_str(i)
     integer, intent(in) :: i
@@ -1063,18 +887,6 @@ contains
     end if
   end subroutine increase_message_stack_
 
-
-  subroutine get_xml_filename_work_(string)
-    character(len = *), intent(out) :: string
-    string = trim(xml_filename_work)
-  end subroutine get_xml_filename_work_
-
-  subroutine set_xml_filename_work_(string)
-    character(len = *), intent(in) :: string
-    xml_filename_work = trim(string)
-  end subroutine set_xml_filename_work_
-
-
   function get_last_message()
     character(len=MSG_LENGTH) :: get_last_message
     if (message_index > 1) then
@@ -1198,7 +1010,7 @@ contains
     logical,      intent(in)           :: if_is
     character(*), intent(in), optional :: message
 
-    msg = '[' // trim(strip(case_name)) // ']: ' 
+    msg = '[' // trim(strip(case_name)) // ']: '
     if (if_is) then
       msg = trim(msg) //     'Expected'
     else
@@ -1230,15 +1042,6 @@ contains
     stdout = write_unit
     open(stdout, file = filename, action = "write", status = "replace")
   end subroutine override_stdout_
-
-  subroutine override_xml_work_(new_unit, filename)
-    integer, intent(in) ::    new_unit
-    character(len = *), intent(in) :: filename
-
-    xml_work = new_unit
-    xml_filename_work = filename
-    open(xml_work, file = filename, action = "write", status = "replace")
-  end subroutine override_xml_work_
 
   subroutine stash_test_suite
     stashed_suite%successful_assert_count = successful_assert_count
@@ -1312,12 +1115,6 @@ contains
     stdout = STDOUT_DEFAULT
   end subroutine end_override_stdout_
 
-  subroutine end_override_xml_work_
-    close(xml_work)
-    xml_work = XML_WORK_DEFAULT
-    xml_filename_work = XML_FN_WORK_DEF
-  end subroutine end_override_xml_work_
-
   subroutine set_prefix_(str)
     character (len = *), intent(in) :: str
     character (len = len_trim(str)) :: str2
@@ -1389,7 +1186,7 @@ contains
   subroutine assert_eq_logical_(var1, var2, message)
 
     logical, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if (var1 .neqv. var2) then
@@ -1407,7 +1204,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     logical, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if (var1(i) .neqv. var2(i)) then
@@ -1425,7 +1222,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     logical, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1444,7 +1241,7 @@ contains
   subroutine assert_eq_string_(var1, var2, message)
 
     character (len = *), intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if (trim(strip(var1)) /= trim(strip(var2))) then
@@ -1462,7 +1259,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     character (len = *), intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if (trim(strip(var1(i))) /= trim(strip(var2(i)))) then
@@ -1480,7 +1277,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     character (len = *), intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1499,7 +1296,7 @@ contains
   subroutine assert_eq_int_(var1, var2, message)
 
     integer, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if (var1 /= var2) then
@@ -1517,7 +1314,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     integer, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if (var1(i) /= var2(i)) then
@@ -1535,7 +1332,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     integer, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1554,7 +1351,7 @@ contains
   subroutine assert_eq_real_(var1, var2, message)
 
     real, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if ((var1 < var2) .or. (var1 > var2)) then
@@ -1589,7 +1386,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     real, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if ((var1(i) < var2(i)) .or. (var1(i) > var2(i))) then
@@ -1625,7 +1422,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     real, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1664,7 +1461,7 @@ contains
   subroutine assert_eq_double_(var1, var2, message)
 
     double precision, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if ((var1 < var2) .or. (var1 > var2)) then
@@ -1699,7 +1496,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     double precision, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if ((var1(i) < var2(i)) .or. (var1(i) > var2(i))) then
@@ -1735,7 +1532,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     double precision, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1774,7 +1571,7 @@ contains
   subroutine assert_eq_complex_(var1, var2, message)
 
     complex(kind=kind(1.0D0)), intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
 
         if ((real (var1) < real (var2)) .or. &
@@ -1812,7 +1609,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     complex(kind=kind(1.0D0)), intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     do i = 1, n
         if ((real (var1(i)) < real (var2(i))) .or. &
@@ -1851,7 +1648,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     complex(kind=kind(1.0D0)), intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     do j = 1, m
       do i = 1, n
@@ -1893,7 +1690,7 @@ contains
   subroutine assert_not_equals_logical_(var1, var2, message)
 
     logical, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -1917,7 +1714,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     logical, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -1941,7 +1738,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     logical, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -1966,7 +1763,7 @@ contains
   subroutine assert_not_equals_string_(var1, var2, message)
 
     character (len = *), intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -1990,7 +1787,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     character (len = *), intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2014,7 +1811,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     character (len = *), intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2039,7 +1836,7 @@ contains
   subroutine assert_not_equals_int_(var1, var2, message)
 
     integer, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2063,7 +1860,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     integer, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2087,7 +1884,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     integer, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2112,7 +1909,7 @@ contains
   subroutine assert_not_equals_real_(var1, var2, message)
 
     real, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2159,7 +1956,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     real, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2207,7 +2004,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     real, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2258,7 +2055,7 @@ contains
   subroutine assert_not_equals_double_(var1, var2, message)
 
     double precision, intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2305,7 +2102,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     double precision, intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2353,7 +2150,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     double precision, intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2404,7 +2201,7 @@ contains
   subroutine assert_not_equals_complex_(var1, var2, message)
 
     complex(kind=kind(1.0D0)), intent (in) :: var1, var2
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2454,7 +2251,7 @@ contains
     integer, intent (in) :: n
     integer              :: i
     complex(kind=kind(1.0D0)), intent (in) :: var1(n), var2(n)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
@@ -2505,7 +2302,7 @@ contains
     integer, intent (in) :: n, m
     integer              :: i, j
     complex(kind=kind(1.0D0)), intent (in) :: var1(n, m), var2(n, m)
-    
+
     character(len = *), intent (in), optional :: message
     logical :: same_so_far
 
